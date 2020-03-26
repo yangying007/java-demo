@@ -1,52 +1,43 @@
-# 配置端口
 server:
-  port: 8764
+  port: 15000
 spring:
   application:
-    name: rabbitmq-provider
-  # 配置数据源
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://182.92.175.117:3306/mp_student?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false
-    username: root
-    password: rootroot123?
-    type: com.alibaba.druid.pool.DruidDataSource
-  # Redis数据源
-  redis:
-    host: 182.92.175.117
-    port: 6379
-    timeout: 6000
-    password: 123456a
-    jedis:
-      pool:
-        max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
-        max-wait: -1      # 连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-idle: 10      # 连接池中的最大空闲连接
-        min-idle: 5       # 连接池中的最小空闲连接
+    name: java-demo
+  profiles:
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    joda-date-time-format: yyyy-MM-dd HH:mm:ss
+    locale: zh_CN
+    time-zone: GMT+8
 
+ribbon:
+  #对当前服务的重试次数
+  MaxAutoRetries: 3
+  #切换相同Server的次数
+  MaxAutoRetriesNextServer: 3
+  httpclient:
+    enabled: true
+  okhttp:
+    enabled: true
+  ReadTimeout: 90000
+  ConnectTimeout: 90000
 
-  mail:
-    host: smtp.qq.com
-    username: 531247063@qq.com
-    password: gcgbwvpuklitcaje
-    from: 531247063@qq.com
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-  rabbitmq:
-    host: 182.92.175.117
-    port: 5672
-    username: admin
-    password: 123456
-    #确认消息已发送到交换机(Exchange)
-    publisher-confirms: true
-    #确认消息已发送到队列(Queue)
-    publisher-returns: true
-    listener:
-      simple:
-        acknowledge-mode: manual
-        prefetch: 100
+hystrix:
+  threadpool:
+    default:
+      coreSize: 1000 #并发执行的最大线程数，默认10
+      maxQueueSize: 1000 #BlockingQueue的最大队列数
+      queueSizeRejectionThreshold: 500 #即使maxQueueSize没有达到，达到queueSizeRejectionThreshold该值后，请求也会被拒绝
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+
+feign:
+  httpclient:
+    enabled: true
+  hystrix:
+    enabled: true
